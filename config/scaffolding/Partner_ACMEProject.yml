@@ -1,0 +1,9 @@
+version: "1.0"
+info:
+  model: int-scaffold
+packages:
+- name: Partner_ACMEProject
+  gitServerName: AbdUmerco
+  gitUrl: https://github.com/Abd-umerco
+  gitUsername: Abd-umerco
+  gitBranch: main
