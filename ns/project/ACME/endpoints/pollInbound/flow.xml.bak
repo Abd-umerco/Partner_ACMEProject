@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FLOW VERSION="3.2" CLEANUP="true">
+  <COMMENT>Open an SFTP session and list the inbound directory.</COMMENT>
+
+  <!-- nodes -->
+
+<INVOKE TIMEOUT="" SERVICE="project.partner_acme_1.endpoints:getSftpConfig" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+  <COMMENT>load config</COMMENT>
+</INVOKE>
+
+<INVOKE TIMEOUT="" SERVICE="pub.client.sftp:login" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+  <COMMENT>login</COMMENT>
+
+  <!-- nodes -->
+
+<MAP MODE="INPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/sftp/userAlias;0;0" TO="/userAlias;0;0">
+</MAPCOPY>
+</MAP>
+
+<MAP MODE="OUTPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/sessionKey;0;0" TO="/sessionKey;0;0">
+</MAPCOPY>
+</MAP>
+</INVOKE>
+
+<INVOKE TIMEOUT="" SERVICE="pub.client.sftp:ls" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+  <COMMENT>list inbound dir</COMMENT>
+
+  <!-- nodes -->
+
+<MAP MODE="INPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/sessionKey;0;0" TO="/sessionKey;0;0">
+</MAPCOPY>
+
+<MAPCOPY FROM="/sftp/remoteInboundDir;0;0" TO="/path;0;0">
+</MAPCOPY>
+</MAP>
+
+<MAP MODE="OUTPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/returnCode;0;0" TO="/returnCode;0;0">
+</MAPCOPY>
+</MAP>
+</INVOKE>
+
+<INVOKE TIMEOUT="" SERVICE="pub.client.sftp:logout" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+  <COMMENT>logout</COMMENT>
+
+  <!-- nodes -->
+
+<MAP MODE="INPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/sessionKey;0;0" TO="/sessionKey;0;0">
+</MAPCOPY>
+</MAP>
+</INVOKE>
+
+<MAP MODE="STANDALONE">
+
+  <!-- nodes -->
+
+<MAPDELETE FIELD="/sftp">
+</MAPDELETE>
+
+<MAPDELETE FIELD="/sessionKey">
+</MAPDELETE>
+
+<MAPDELETE FIELD="/dirList">
+</MAPDELETE>
+</MAP>
+</FLOW>

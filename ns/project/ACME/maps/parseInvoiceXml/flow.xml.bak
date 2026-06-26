@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FLOW VERSION="3.2" CLEANUP="true">
+  <COMMENT>XML string -&gt; XML node -&gt; IData document, then bind into the canonical Invoice.
+  Map element paths from /document to /invoice in Designer (depends on your XML schema).</COMMENT>
+
+  <!-- nodes -->
+
+<INVOKE TIMEOUT="" SERVICE="pub.xml:xmlStringToXMLNode" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+  <COMMENT>parse XML</COMMENT>
+
+  <!-- nodes -->
+
+<MAP MODE="INPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/invoiceXml;0;0" TO="/xmldata;0;0">
+</MAPCOPY>
+</MAP>
+</INVOKE>
+
+<INVOKE TIMEOUT="" SERVICE="pub.xml:xmlNodeToDocument" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+  <COMMENT>node -&gt; document</COMMENT>
+
+  <!-- nodes -->
+
+<MAP MODE="INPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/node;0;0" TO="/node;0;0">
+</MAPCOPY>
+
+<MAPSET NAME="Setter" OVERWRITE="true" VARIABLES="false" GLOBALVARIABLES="false" FIELD="/documentTypeName;1;0">
+  <DATA ENCODING="XMLValues" I18N="true">
+
+<Values version="2.0">
+  <value name="xml">project.partner_acme.documenttypes:Invoice</value>
+  <record name="type" javaclass="com.wm.util.Values">
+    <value name="node_type">unknown</value>
+    <value name="node_subtype">unknown</value>
+    <value name="is_public">false</value>
+    <value name="field_name">documentTypeName</value>
+    <value name="field_type">string</value>
+    <value name="field_dim">0</value>
+    <array name="field_options" type="value" depth="1">
+    </array>
+    <value name="nillable">true</value>
+    <value name="form_qualified">false</value>
+    <value name="is_global">false</value>
+  </record>
+</Values>
+</DATA>
+</MAPSET>
+</MAP>
+</INVOKE>
+
+<MAP MODE="STANDALONE">
+  <COMMENT>bind parsed document into the canonical Invoice (adjust paths to your XML)</COMMENT>
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/document/invoiceNumber;0;0" TO="/invoice/invoiceNumber;0;0">
+</MAPCOPY>
+
+<MAPCOPY FROM="/document/invoiceDate;0;0" TO="/invoice/invoiceDate;0;0">
+</MAPCOPY>
+
+<MAPCOPY FROM="/document/poNumber;0;0" TO="/invoice/poNumber;0;0">
+</MAPCOPY>
+
+<MAPCOPY FROM="/document/totalAmount;0;0" TO="/invoice/totalAmount;0;0">
+</MAPCOPY>
+
+<MAPDELETE FIELD="/node">
+</MAPDELETE>
+
+<MAPDELETE FIELD="/document">
+</MAPDELETE>
+</MAP>
+</FLOW>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<FLOW VERSION="3.2" CLEANUP="true">
+  <COMMENT>Send a file to the partner.</COMMENT>
+
+  <!-- nodes -->
+
+<INVOKE TIMEOUT="" SERVICE="project.ACME.endpoints:getSftpConfig" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+  <COMMENT>config</COMMENT>
+</INVOKE>
+
+<INVOKE TIMEOUT="" SERVICE="pub.io:stringToStream" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+  <COMMENT>text -&gt; stream</COMMENT>
+
+  <!-- nodes -->
+
+<MAP MODE="INPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/content;0;0" TO="/string;0;0">
+</MAPCOPY>
+</MAP>
+
+<MAP MODE="OUTPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/inputStream;0;0" TO="/contentStream;0;0">
+</MAPCOPY>
+</MAP>
+</INVOKE>
+
+<INVOKE TIMEOUT="" SERVICE="pub.client.sftp:login" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+  <COMMENT>login</COMMENT>
+
+  <!-- nodes -->
+
+<MAP MODE="INPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/sftp/userAlias;0;0" TO="/userAlias;0;0">
+</MAPCOPY>
+</MAP>
+
+<MAP MODE="OUTPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/sessionKey;0;0" TO="/sessionKey;0;0">
+</MAPCOPY>
+</MAP>
+</INVOKE>
+
+<INVOKE TIMEOUT="" SERVICE="pub.client.sftp:put" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+  <COMMENT>upload to outbound dir</COMMENT>
+
+  <!-- nodes -->
+
+<MAP MODE="INPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/sessionKey;0;0" TO="/sessionKey;0;0">
+</MAPCOPY>
+
+<MAPCOPY FROM="/contentStream;0;0" TO="/contentStream;0;0">
+</MAPCOPY>
+
+<MAPCOPY FROM="/remoteFile;0;0" TO="/remoteFile;0;0">
+</MAPCOPY>
+</MAP>
+
+<MAP MODE="OUTPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/returnCode;0;0" TO="/returnCode;0;0">
+</MAPCOPY>
+</MAP>
+</INVOKE>
+
+<INVOKE TIMEOUT="" SERVICE="pub.client.sftp:logout" VALIDATE-IN="$none" VALIDATE-OUT="$none">
+  <COMMENT>logout</COMMENT>
+
+  <!-- nodes -->
+
+<MAP MODE="INPUT">
+
+  <!-- nodes -->
+
+<MAPCOPY FROM="/sessionKey;0;0" TO="/sessionKey;0;0">
+</MAPCOPY>
+</MAP>
+</INVOKE>
+
+<MAP MODE="STANDALONE">
+
+  <!-- nodes -->
+
+<MAPDELETE FIELD="/sftp">
+</MAPDELETE>
+
+<MAPDELETE FIELD="/sessionKey">
+</MAPDELETE>
+
+<MAPDELETE FIELD="/contentStream">
+</MAPDELETE>
+</MAP>
+</FLOW>
